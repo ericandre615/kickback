@@ -21,6 +21,10 @@
     "promises",
     "es6"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ericandre615/kickback.git"
+  },
   "license": "MIT",
   "private": true,
   "ignore": [
