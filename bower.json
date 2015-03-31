@@ -1,0 +1,33 @@
+{
+  "name": "kickback",
+  "version": "0.1.0",
+  "authors": [
+    "Eric Andre <eric@meetidesign.com>"
+  ],
+  "description": "kickback is a simple, lightweight xhr / ajax module that utilizes native promises",
+  "main": "src/kickback.js",
+  "moduleType": [
+    "es6",
+    "globals",
+    "node"
+  ],
+  "keywords": [
+    "kickback",
+    "ajax",
+    "xhr",
+    "xhr2",
+    "cors",
+    "request",
+    "promises",
+    "es6"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

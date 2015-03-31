@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Primitive Tests, Poorly Written</title>
+</head>
+<body>
+<div id="first">First Element</div>
+<div id="second">Second Element</div>
+<form method="POST" action="" enctype="multipart/form-data">
+<input type="text" name="username" placeholder="Your Name" required>
+<input type="email" name="email" placeholder="Email" required>
+<textarea name="msg" placeholder="Additional Info"></textarea>
+<button id="submit-btn" type="submit" value="Submit">Submit</button>
+</form>
+<form id="uploads" method="POST" action="" enctype="multipart/form-data">
+<input type="file" name="file_upload">
+<button type="submit" value="Upload File">Upload File</button>
+</form>
+<progress value="0" max="100"></progress>
+
+<script src="../dist/kickback.min.js"></script>
+<script src="../dist/kickback.bundle.js"></script>
+<script>
+    var kbgstart = new Date().getTime();
+    var kb = kickback;
+    // even more of an alias
+    var kbr = kickback.request;
+    var elem = document.getElementById('second');
+    var uploadForm = document.getElementById('uploads');
+    kbr('http://localhost:8080/tests/data-large.json')
+    .then(function(response) {
+        var outputJSON = document.createElement('pre');
+        document.body.appendChild(outputJSON);
+        var outObj = JSON.parse(response);
+        var objId = Math.floor(Math.random() * (outObj.fathers.length - 0))+0;
+        // weird id 1548 .name is Anthony Davis !
+        outputJSON.innerHTML = outObj.fathers[objId].name;
+        console.log(JSON.parse(response));
+    })
+    .then(null, function(error) {
+        throw new Error(error);
+    });
+    //var getData = kb.request({url:'http://localhost:8080/tests/data.php'})
+        //.then(function(response) { console.log(response); }).then(null, function(err) { throw new Error(err); });
+    
+    var formSubmit = document.querySelector('form');
+    formSubmit.addEventListener('submit', function(e) {
+        e.preventDefault();
+        var kbstart = new Date().getTime();
+        var formValues = e.srcElement;
+
+        var sendData = {
+            'username': formValues.username.value,
+            'email': formValues.email.value,
+            'msg': formValues.msg.value
+        };
+
+        var sendForm = new FormData(e.srcElement);
+        kbr({
+            url: 'http://localhost:8080/tests/form-action.php',
+            data: sendData,
+            auto: true,
+            method: 'POST'
+        })
+        .then(function(response) {
+            console.log(new Date().getTime() - kbstart);
+            console.log('KB ', response);
+            return JSON.parse(response);
+        }).then(null, function(err) {
+            throw new Error(err);
+        }).then(function(response) {
+            var ul = document.createElement('ul');
+            elem.innerHTML = "";
+            ul.setAttribute('id','users');
+            elem.appendChild(ul);
+
+            ul.appendChild(document.createElement('li')).innerHTML = response.username;
+            ul.appendChild(document.createElement('li')).innerHTML = response.email;
+            ul.appendChild(document.createElement('li')).innerHTML = response.message;
+            console.log(new Date().getTime() - kbstart);
+        });
+    }, false);
+
+    uploadForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        var theFile = e.srcElement.file_upload;
+        var fileData = new FormData(e.srcElement);
+        kickback.request({
+            url: 'http://localhost:8080/tests/form-action.php',
+            method: 'POST',
+            data: fileData
+        }).then(function(response) {
+            console.log(response);
+        }).then(null, function(error) {
+            throw new Error(error);
+        });
+    }, false);
+
+// fileRead API / progress experiments
+var progress, fileInput = document.querySelector('input[type="file"]');
+var progressBar = document.querySelector('progress');
+if(typeof window.FileReader !== 'undefined') {
+    progress = new FileReader();
+} else {
+    progress = null;
+};
+
+console.log(progressBar);
+console.log(progress);
+progress.onprogress = function(e) {
+    if(e.lengthComputable) {
+        progressBar.max = e.total;
+        progressBar.value = e.loaded;
+        progressBar.innerHTML = e.loaded;
+    } else {
+        progressBar.innerHTML = 'Can not get size';
+    }
+};
+
+var fileIsImage = false;
+// check if file is valid image type
+progress.onload = function(e) {
+    //var buffer = progress.result.slice(0, 4);
+    //var int32View = new Int32Array(buffer);
+    //var checkType = int32View[0];
+    //if(checkType) {
+        //if(checkType === 1196314761) {
+            //fileIsImage = 'image/png';
+        //} else if(checkType === 944130375) {
+            //filsIsImage = 'image/gif';
+        //} else if(checkType === 544099650) {
+            //fileIsImage = 'image/bmp';
+        //} else if(checkType === -520103681) {
+            //fileIsImage = 'image/jpg';
+        //} else {
+            //fileIsImage = false;
+        //}
+    //};
+    var reggie = /image/;
+    if(reggie.test(progress.result)) {
+        fileIsImage = true;
+    }
+    return;
+};
+
+progress.onloadend = function(e) {
+    if(progress.error != null) {
+        //error with file
+        throw new Error('Upload Error: ',progress.error);
+    } else {
+        //success - do something with result
+        if(fileIsImage) {
+            var filePreview = document.createElement('img');
+            filePreview.width = '100';
+            filePreview.src = progress.result;
+            uploadForm.appendChild(filePreview);
+            console.log('File is image ',fileIsImage);
+
+            //now switch to false for next file may not be image
+            fileIsImage = false;
+        }
+        console.log('File finished without error');    
+    }
+};
+
+fileInput.onchange = function(e) {
+    progress.readAsDataURL(fileInput.files[0]);
+};
+</script>
+
+</body>
+</html>
