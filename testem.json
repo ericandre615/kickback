@@ -1,7 +1,10 @@
 {
-    "framework": "jasmine",
+    "framework": "jasmine2",
+   
     "src_files": [
         "src/kickback.js",
-        "spec/*.js"
-    ]
+        "spec/bundledSpec.js"
+    ],
+    "before_tests": "browserify spec/kickbackSpec.js -o spec/bundledSpec.js",
+    "on_exit": "rm spec/bundledSpec.js"
 }
