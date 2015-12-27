@@ -1,6 +1,6 @@
 {
   "name": "kickback",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Kickback a simple AJAX / XHR module with using  native promises and as many XHR2 features as possible",
   "main": "src/kickback.js",
   "directories": {

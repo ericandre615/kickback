@@ -59,7 +59,7 @@ var kickback = (function(kickback) {
                         kbOptions.tmp[elem.name] = elem.value;
                     });
                     kbOptions.data = kbOptions.tmp;
-                    delete kbOptions.tmp;
+                    kbOptions.tmp = null;
                 }
                 
                 kbOptions.serialize = true;
