@@ -3,7 +3,7 @@
 
 ## What it is
 
-Simple lightweight Ajax / XHR module that utilizes native promises. Supports XHR2 features when available.
+Simple lightweight Ajax / XHR module that utilizes native *Promises*. Supports XHR2 features when available.
 This is the start of a series of small, lightweight modules that do one thing. The goal later is to have a
 module buidler that is fast and easy to use so you can customize a nice library in which you only require what you need and yet they will all extend each other so they can used together.
 
